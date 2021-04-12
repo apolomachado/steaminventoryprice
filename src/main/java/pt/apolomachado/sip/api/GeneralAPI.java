@@ -9,6 +9,7 @@ import java.util.List;
 public class GeneralAPI {
 
     protected static final File proxiesFile = new File("proxies.txt");
+    public static String currentLog = "...";
     protected static final List<String> proxies = new ArrayList<>();
     protected static int index = 0;
 
@@ -26,8 +27,8 @@ public class GeneralAPI {
             while ((line = br.readLine()) != null) {
                 proxies.add(line);
             }
-            System.out.println("[INFO] Proxies loaded.");
-            System.out.println("[INFO] " + getProxies().size() + " proxies available.");
+            GeneralAPI.currentLog = "[INFO] Proxies loaded.";
+            GeneralAPI.currentLog = "[INFO] " + getProxies().size() + " proxies available.";
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -3,6 +3,7 @@ package pt.apolomachado.sip.api;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
@@ -14,7 +15,7 @@ public class SteamInventoryAPI {
     private static final String url = "https://steamcommunity.com/id/%username/inventory/json/%appId/%context";
     private static final JsonParser jsonParser = new JsonParser();
 
-    public static JsonObject getInventory(String username, int appId, int context) {
+    public static JsonObject getInventoryJsonObject(String username, int appId, int context) {
         JsonObject jsonObject = null;
         boolean success = false;
         while(!success) {
@@ -25,19 +26,20 @@ public class SteamInventoryAPI {
                 if(GeneralAPI.proxiesEnabled()) {
                     Proxy proxy = GeneralAPI.choiceProxy();
                     httpURLConnection = (HttpURLConnection) urlObject.openConnection(proxy);
-                    System.out.println("[SteamInventoryAPI] Retrieving data with proxy: " + proxy.address().toString());
+                    GeneralAPI.currentLog = "[SteamInventoryAPI] Retrieving data with proxy: " + proxy.address().toString();
                 }
                 httpURLConnection.connect();
 
                 int responseCode = httpURLConnection.getResponseCode();
+                System.out.println("RC: " + responseCode);
                 if(responseCode == 429) {
-                    System.out.println("[Error] Your app has made too many requests.");
+                    GeneralAPI.currentLog = "[Error] Your app has made too many requests.";
+                    JOptionPane.showMessageDialog(null, "An error occurred, try again later. [429]");
                     return null;
                 } else if(responseCode == 400) {
-                    System.out.println("[Error] Bad Request.");
+                    GeneralAPI.currentLog = "[Error] Bad Request.";
                     return null;
                 }
-
                 Scanner scanner = new Scanner(urlObject.openStream());
                 StringBuilder json = null;
                 while (scanner.hasNextLine()) {
